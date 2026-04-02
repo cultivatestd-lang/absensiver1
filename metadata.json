@@ -1,0 +1,5 @@
+{
+  "name": "Aesthetic Attendance",
+  "description": "A minimalist and aesthetic attendance app integrated with Google Sheets and Drive.",
+  "requestFramePermissions": ["camera", "geolocation"]
+}
