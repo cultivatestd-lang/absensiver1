@@ -50,47 +50,26 @@ export default function App() {
   
   const webcamRef = useRef<Webcam>(null);
 
-  const getLocation = (): Promise<{ latitude: number, longitude: number } | null> => {
+ const getLocation = (): Promise<{ latitude: number, longitude: number } | null> => {
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
-        alert('Browser Anda tidak mendukung fitur lokasi.');
+        console.warn('Geolocation is not supported by this browser.');
         resolve(null);
         return;
       }
 
-      // Beri waktu 15 detik untuk mencari satelit agar lebih maksimal
-      const options = {
-        enableHighAccuracy: true,
-        timeout: 15000, 
-        maximumAge: 0
-      };
-
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          // Mengambil nilai akurasi (radius error) dalam satuan meter
-          const akurasi = position.coords.accuracy; 
-          
-          console.log(`Radius Akurasi saat ini: ${akurasi} meter`);
-
-          // VALIDASI: Jika akurasi lebih dari 50 meter, tolak absen!
-          if (akurasi > 50) {
-            alert(`Sinyal GPS lemah (Radius: ${Math.round(akurasi)} meter). \n\nMohon nyalakan GPS, matikan Wi-Fi sejenak, dan berpindahlah ke luar ruangan/dekat jendela agar jarak akurasi di bawah 50 meter.`);
-            resolve(null); // Batalkan proses pengambilan lokasi
-            return;
-          }
-
-          // Jika akurasi bagus (di bawah 50m), lanjutkan
           resolve({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           });
         },
         (error) => {
-          console.error('Error mendapatkan lokasi:', error);
-          alert('Gagal mendapatkan lokasi. Pastikan izin lokasi (GPS) di HP sudah menyala.');
+          console.error('Error getting location:', error);
           resolve(null);
         },
-        options
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     });
   };
